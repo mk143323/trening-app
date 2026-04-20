@@ -71,6 +71,35 @@
   .training-card.d .meta-dot { background:var(--accent4); }
   .alt-label { font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--accent4); background:rgba(124,106,247,0.1); padding:3px 8px; border-radius:6px; display:inline-block; margin-bottom:8px; }
 
+  /* DAILY ROUTINE BANNERS */
+  .routine-banners { display:flex; flex-direction:column; gap:10px; margin-bottom:32px; }
+  .routine-banner { border-radius:16px; padding:16px 20px; cursor:pointer; display:flex; align-items:center; gap:14px; transition:all 0.2s; }
+  .routine-banner:active { transform:scale(0.98); }
+  .routine-banner.jutro { background:linear-gradient(135deg,rgba(255,214,10,0.08) 0%,rgba(255,214,10,0.03) 100%); border:1px solid rgba(255,214,10,0.2); }
+  .routine-banner.pauza { background:linear-gradient(135deg,rgba(124,106,247,0.08) 0%,rgba(124,106,247,0.03) 100%); border:1px solid rgba(124,106,247,0.2); }
+  .routine-banner.vecer { background:linear-gradient(135deg,rgba(255,77,109,0.08) 0%,rgba(255,77,109,0.03) 100%); border:1px solid rgba(255,77,109,0.2); }
+  .routine-banner-icon { font-size:28px; flex-shrink:0; }
+  .routine-banner-info { flex:1; }
+  .routine-banner-title { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:0.5px; line-height:1; margin-bottom:3px; }
+  .routine-banner.jutro .routine-banner-title { color:var(--accent3); }
+  .routine-banner.pauza .routine-banner-title { color:var(--accent4); }
+  .routine-banner.vecer .routine-banner-title { color:var(--accent2); }
+  .routine-banner-sub { font-size:12px; color:var(--muted); }
+  .routine-arrow { font-size:18px; opacity:0.5; }
+  .routine-banner.jutro .routine-arrow { color:var(--accent3); }
+  .routine-banner.pauza .routine-arrow { color:var(--accent4); }
+  .routine-banner.vecer .routine-arrow { color:var(--accent2); }
+
+  /* ROUTINE SCREEN */
+  #routine { background:var(--bg); }
+  .routine-header { position:sticky; top:0; z-index:100; background:var(--bg); border-bottom:1px solid var(--border); padding:16px 20px; display:flex; align-items:center; gap:16px; }
+  .routine-steps { padding:20px 20px 100px; }
+  .routine-intro { border-radius:14px; padding:14px; margin-bottom:20px; }
+  .routine-intro.jutro { background:rgba(255,214,10,0.06); border:1px solid rgba(255,214,10,0.15); }
+  .routine-intro.pauza { background:rgba(124,106,247,0.06); border:1px solid rgba(124,106,247,0.15); }
+  .routine-intro.vecer { background:rgba(255,77,109,0.06); border:1px solid rgba(255,77,109,0.15); }
+  .routine-intro-text { font-size:12px; color:var(--muted); line-height:1.6; }
+
   /* SCHEDULE */
   .schedule-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; overflow:hidden; }
   .schedule-row { display:flex; align-items:center; padding:14px 20px; border-bottom:1px solid var(--border); gap:14px; }
@@ -241,6 +270,34 @@
       </div>
     </div>
 
+    <div class="section-label">Dnevne rutine — svaki dan</div>
+    <div class="routine-banners">
+      <div class="routine-banner jutro" onclick="openRoutine('jutro')">
+        <div class="routine-banner-icon">🌅</div>
+        <div class="routine-banner-info">
+          <div class="routine-banner-title">JUTARNJA RUTINA</div>
+          <div class="routine-banner-sub">4 vježbe · 10 min · Prije kave, u pidžami</div>
+        </div>
+        <div class="routine-arrow">›</div>
+      </div>
+      <div class="routine-banner pauza" onclick="openRoutine('pauza')">
+        <div class="routine-banner-icon">💻</div>
+        <div class="routine-banner-info">
+          <div class="routine-banner-title">PAUZA NA POSLU</div>
+          <div class="routine-banner-sub">3 vježbe · 2 min · Svaki sat</div>
+        </div>
+        <div class="routine-arrow">›</div>
+      </div>
+      <div class="routine-banner vecer" onclick="openRoutine('vecer')">
+        <div class="routine-banner-icon">🌙</div>
+        <div class="routine-banner-info">
+          <div class="routine-banner-title">VEČERNJA RUTINA</div>
+          <div class="routine-banner-sub">3 vježbe · 5 min · Prije spavanja</div>
+        </div>
+        <div class="routine-arrow">›</div>
+      </div>
+    </div>
+
     <div class="section-label">Raspored tjedna</div>
     <div class="schedule-card">
       <div class="schedule-row"><div class="schedule-day">Pon</div><div class="schedule-activity">🏋️ Teretana A + ⚽ Nogomet</div><div class="schedule-badge badge-snaga">Snaga</div></div>
@@ -252,6 +309,19 @@
       <div class="schedule-row"><div class="schedule-day">Ned</div><div class="schedule-activity">😴 Slobodan dan</div><div class="schedule-badge badge-odmor">Odmor</div></div>
     </div>
   </div>
+</div>
+
+<!-- ROUTINE SCREEN -->
+<div id="routine" class="screen">
+  <div class="routine-header">
+    <div class="back-btn" onclick="goHome()">←</div>
+    <div class="workout-header-info">
+      <div class="workout-header-label" id="routine-label">Svaki dan</div>
+      <div class="workout-header-title" id="routine-title">Jutarnja rutina</div>
+    </div>
+    <div style="font-size:13px;color:var(--muted);font-weight:600" id="routine-prog">0/0</div>
+  </div>
+  <div class="routine-steps" id="routine-steps"></div>
 </div>
 
 <!-- WARMUP SCREEN -->
@@ -410,6 +480,90 @@
 </div>
 
 <script>
+const ROUTINES = {
+  jutro:{
+    label:'Svaki dan — prije kave',
+    title:'🌅 JUTARNJA RUTINA',
+    color:'var(--accent3)',
+    introClass:'jutro',
+    intro:'Sa sedentarnim poslom tijelo se "zatvara" svaki dan. Ovih 10 minuta ujutro direktno smanjuje stres na operiranom koljenu i sprečava skraćivanje lože i hip flexora.',
+    steps:[
+      {name:'Hip 90/90 Stretch',param:'60s/strana',note:'Sjedni na pod, oba koljena u kut 90°. Otvara kuk koji se zatvorio spavanjem. Najvažnija jutarnja vježba za tebe post-op.'},
+      {name:'Cat-Cow',param:'10 ponavljanja',note:'Na četiri uda — izmjenjuj savijanje i ispupčivanje leđa. Budi kralježnicu koja je bila komprimirana cijelu noć.'},
+      {name:'Glute Bridge',param:'2 × 15',note:'Aktivira gluteus prije dana sjedenja. Bez ovoga koljeno preuzima posao koji bi trebao raditi gluteus.'},
+      {name:'Thoracic Rotation',param:'8/strana',note:'Sjedni na pod, ruke iza glave, rotiraj gornji dio leđa. Direktno utječe na držanje i smanjuje napetost u vratu i ramenima od sjedenja.'},
+    ]
+  },
+  pauza:{
+    label:'Svaki sat na poslu',
+    title:'💻 PAUZA NA POSLU',
+    color:'var(--accent4)',
+    introClass:'pauza',
+    intro:'Postavi alarm svaki sat. 2 minute koje prekidaju kontinuirano skraćivanje hip flexora i vrata. Sjedenje 8 sati = direktan sabotaž tvog oporavka koljena.',
+    steps:[
+      {name:'Hip Flexor Stretch uz stol',param:'30s/strana',note:'Stani, napravi korak naprijed, potisnи kuk prema naprijed. Možeš raditi uz stol ili stolicu. Ovo je najvažnija vježba za programere.'},
+      {name:'Wall Angels',param:'10 ponavljanja',note:'Leđa uz zid, ruke u kut 90°, polako ih klizi gore i dolje uz zid. Otvara prsa i aktivira gornji dio leđa koji je slomljen od tipkanja.'},
+      {name:'Neck Rolls',param:'30 sekundi',note:'Lagano klizi glavu lijevo-desno i naprijed-nazad. NE puni kružni rotacijski pokret — to može oštetiti vrat. Samo lateralna fleksija.'},
+    ]
+  },
+  vecer:{
+    label:'Svaki dan — prije spavanja',
+    title:'🌙 VEČERNJA RUTINA',
+    color:'var(--accent2)',
+    introClass:'vecer',
+    intro:'5 minuta koje ubrzavaju oporavak dok spavaš. Stretching prije spavanja povećava amplitudu pokreta i smanjuje jutarnju ukočenost — posebno bitno za post-op koljena.',
+    steps:[
+      {name:'Pigeon Pose',param:'45s/strana',note:'Duboki gluteus i piriformis stretch. Direktno smanjuje kompresiju na koljenu kroz oslobađanje napetosti u kuku. Ako je previše intenzivno, radi Figure 4 na leđima.'},
+      {name:'Hamstring Stretch',param:'45s/strana',note:'Lezi na leđa, jednu nogu podij gore i drži. Pasivni stretch lože dok si relaksiran je najefikasniji — mišić se ne može opirati kao u aktivnom stretchu.'},
+      {name:'Box Breathing',param:'2 minute',note:'4 sekunde udah — 4 sekunde drži — 4 sekunde izdah — 4 sekunde drži. Direktno aktivira parasimpatički sustav i ubrzava oporavak. Zvuči jednostavno, ali razlika je mjerljiva.'},
+    ]
+  }
+};
+
+let currentRoutine=null, routineDone=new Set();
+
+function openRoutine(type){
+  currentRoutine=type;routineDone=new Set();
+  const r=ROUTINES[type];
+  document.getElementById('routine-label').textContent=r.label;
+  document.getElementById('routine-title').textContent=r.title;
+  document.getElementById('routine-title').style.color=r.color;
+  renderRoutine(r);
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('routine').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function renderRoutine(r){
+  const el=document.getElementById('routine-steps');
+  el.innerHTML=`<div class="routine-intro ${r.introClass}"><div class="routine-intro-text">${r.intro}</div></div>`;
+  r.steps.forEach((step,i)=>{
+    const d=document.createElement('div');
+    d.className='warmup-step';d.id='rs-'+i;d.onclick=()=>toggleRS(i);
+    d.innerHTML=`<div class="ws-num">${i+1}</div><div class="ws-body"><div class="ws-name">${step.name}</div><div class="ws-params"><span class="ws-param green">${step.param}</span></div><div class="ws-note">${step.note}</div></div>`;
+    el.appendChild(d);
+  });
+  const btn=document.createElement('button');
+  btn.className='warmup-done-btn';
+  btn.style.background=r.color==='var(--accent3)'?'#ffd60a':r.color==='var(--accent4)'?'#7c6af7':'#ff4d6d';
+  btn.textContent='✓ Gotovo — natrag';
+  btn.onclick=goHome;
+  el.appendChild(btn);
+  updateRoutineProgress();
+}
+
+function toggleRS(idx){
+  const el=document.getElementById('rs-'+idx);
+  if(routineDone.has(idx)){routineDone.delete(idx);el.classList.remove('done');el.querySelector('.ws-num').textContent=idx+1;}
+  else{routineDone.add(idx);el.classList.add('done');el.querySelector('.ws-num').textContent='✓';}
+  updateRoutineProgress();
+}
+
+function updateRoutineProgress(){
+  const total=ROUTINES[currentRoutine].steps.length;
+  document.getElementById('routine-prog').textContent=routineDone.size+'/'+total;
+}
+
 const WORKOUTS = {
   a:{label:'TRENING A',title:'Snaga + Stabilnost',color:'#00e5a0',phases:[
     {id:'snaga',name:'💪 Snaga + Stabilnost',subtitle:'Fokus na posterior chain — loža, gluteusi, core. Temelj prevencije ozljeda i povratka forme.',exercises:[
