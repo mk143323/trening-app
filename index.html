@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Trening — Put do Sezone</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0f;--surface:#13131a;--surface2:#1c1c26;
+  --accent:#00e5a0;--accent2:#ff4d6d;--accent3:#ffd60a;--accent4:#7c6af7;
+  --text:#f0f0f5;--muted:#6b6b80;--border:#2a2a38;
+  --phase-color:#00e5a0;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+.screen{display:none;min-height:100vh;padding-bottom:80px;}
+.screen.active{display:block;}
+
+/* ── BOTTOM NAV ── */
+.bnav{position:fixed;bottom:0;left:0;right:0;z-index:500;background:var(--surface);border-top:1px solid var(--border);display:flex;padding:8px 0 20px;}
+.bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;border:none;background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:9px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;transition:all 0.2s;border-radius:10px;}
+.bnav-btn.active{color:var(--phase-color);}
+.bnav-icon{font-size:20px;line-height:1;}
+
+/* ── HERO ── */
+.hero{padding:44px 20px 24px;position:relative;overflow:hidden;border-bottom:1px solid var(--border);}
+.hero::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(0,229,160,0.1) 0%,transparent 70%);}
+.hero-tag{font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--phase-color);margin-bottom:8px;transition:color 0.4s;}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:52px;line-height:0.9;color:var(--text);letter-spacing:1px;margin-bottom:16px;}
+.hero-title em{color:var(--phase-color);font-style:normal;transition:color 0.4s;}
+
+/* ── PHASE SELECTOR ── */
+.phase-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 20px;}
+.phase-tabs{display:flex;gap:6px;margin-bottom:14px;}
+.ptab{flex:1;padding:8px 4px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.2s;text-align:center;line-height:1.3;}
+.ptab.active{color:#000;font-weight:800;}
+.ptab.f1.active{background:var(--accent);border-color:var(--accent);}
+.ptab.f2.active{background:var(--accent3);border-color:var(--accent3);}
+.ptab.f3.active{background:var(--accent2);border-color:var(--accent2);}
+.ptab.fd.active{background:var(--accent4);border-color:var(--accent4);}
+
+/* ── TIMELINE ── */
+.timeline{position:relative;height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;margin-bottom:10px;}
+.timeline-fill{height:100%;border-radius:4px;transition:width 0.5s ease,background 0.4s;}
+.week-dots{display:flex;justify-content:space-between;margin-top:6px;}
+.wdot{font-size:9px;color:var(--muted);font-weight:600;}
+.wdot.active{color:var(--phase-color);}
+
+/* ── WEEK SELECTOR ── */
+.week-sel{display:flex;align-items:center;gap:10px;margin-top:10px;}
+.week-btn{width:32px;height:32px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.week-label{flex:1;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;}
+
+/* ── PHASE INFO CARD ── */
+.phase-info{margin:16px 20px 0;border-radius:14px;padding:14px 16px;border:1px solid;}
+.phase-info.f1{background:rgba(0,229,160,0.06);border-color:rgba(0,229,160,0.2);}
+.phase-info.f2{background:rgba(255,214,10,0.06);border-color:rgba(255,214,10,0.2);}
+.phase-info.f3{background:rgba(255,77,109,0.06);border-color:rgba(255,77,109,0.2);}
+.phase-info.fd{background:rgba(124,106,247,0.06);border-color:rgba(124,106,247,0.2);}
+.pi-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:0.5px;margin-bottom:6px;}
+.pi-text{font-size:12px;color:var(--muted);line-height:1.6;}
+.pi-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.pi-chip{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;background:var(--surface2);color:var(--muted);}
+
+/* ── CONTENT ── */
+.content{padding:16px 20px;}
+.slabel{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;margin-top:20px;}
+.slabel:first-child{margin-top:0;}
+
+/* ── SCHEDULE CARD ── */
+.sched-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:4px;}
+.sched-row{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);gap:12px;}
+.sched-row:last-child{border-bottom:none;}
+.sched-day{font-size:11px;font-weight:700;color:var(--muted);width:28px;text-transform:uppercase;letter-spacing:1px;flex-shrink:0;}
+.sched-act{flex:1;font-size:13px;font-weight:500;color:var(--text);}
+.sched-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;}
+.sb-s{background:rgba(0,229,160,0.15);color:var(--accent);}
+.sb-e{background:rgba(255,214,10,0.15);color:var(--accent3);}
+.sb-t{background:rgba(255,77,109,0.15);color:var(--accent2);}
+.sb-b{background:rgba(124,106,247,0.15);color:var(--accent4);}
+.sb-o{background:rgba(255,255,255,0.05);color:var(--muted);}
+
+/* ── TRAINING CARDS ── */
+.tcards{display:flex;flex-direction:column;gap:10px;}
+.tcard{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;}
+.tcard:active{transform:scale(0.98);}
+.tcard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px;}
+.tcard.ta::before{background:var(--accent);}
+.tcard.tb::before{background:var(--accent3);}
+.tcard.tc::before{background:var(--accent2);}
+.tcard.td::before{background:var(--accent4);}
+.tcard.trdl::before{background:var(--accent);}
+.tc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+.tc-label{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;line-height:1;}
+.tcard.ta .tc-label{color:var(--accent);}
+.tcard.tb .tc-label{color:var(--accent3);}
+.tcard.tc .tc-label{color:var(--accent2);}
+.tcard.td .tc-label{color:var(--accent4);}
+.tcard.trdl .tc-label{color:var(--accent);}
+.tc-day{font-size:11px;color:var(--muted);background:var(--surface2);padding:3px 9px;border-radius:7px;font-weight:500;}
+.tc-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px;}
+.tc-desc{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:12px;}
+.tc-meta{display:flex;gap:12px;flex-wrap:wrap;}
+.tc-meta-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);}
+.tc-dot{width:5px;height:5px;border-radius:50%;}
+.tcard.ta .tc-dot{background:var(--accent);}
+.tcard.tb .tc-dot{background:var(--accent3);}
+.tcard.tc .tc-dot{background:var(--accent2);}
+.tcard.td .tc-dot{background:var(--accent4);}
+.tcard.trdl .tc-dot{background:var(--accent);}
+.phase-tag{font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:5px;display:inline-block;margin-bottom:6px;}
+.pt-f1{background:rgba(0,229,160,0.15);color:var(--accent);}
+.pt-f2{background:rgba(255,214,10,0.15);color:var(--accent3);}
+.pt-f3{background:rgba(255,77,109,0.15);color:var(--accent2);}
+
+/* ── PROGRESS SCREEN ── */
+.prog-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:10px;}
+.prog-title{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--text);margin-bottom:4px;}
+.prog-sub{font-size:12px;color:var(--muted);margin-bottom:14px;}
+.prog-entry{display:flex;gap:8px;margin-bottom:8px;}
+.prog-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;}
+.prog-btn{padding:10px 16px;border-radius:10px;background:var(--phase-color);border:none;color:#000;font-size:13px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;transition:background 0.3s;}
+.prog-history{display:flex;flex-direction:column;gap:6px;margin-top:10px;}
+.prog-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);}
+.prog-row:last-child{border-bottom:none;}
+.prog-week{font-size:11px;color:var(--muted);font-weight:600;}
+.prog-val{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--phase-color);transition:color 0.3s;}
+.prog-diff{font-size:11px;font-weight:700;padding:2px 6px;border-radius:5px;}
+.diff-good{background:rgba(0,229,160,0.15);color:var(--accent);}
+.diff-bad{background:rgba(255,77,109,0.15);color:var(--accent2);}
+
+/* ── WARMUP BANNER ── */
+.wu-banner{background:linear-gradient(135deg,rgba(0,229,160,0.08),rgba(0,229,160,0.02));border:1px solid rgba(0,229,160,0.2);border-radius:14px;padding:16px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all 0.2s;margin-bottom:16px;}
+.wu-banner:active{transform:scale(0.98);}
+.wu-icon{font-size:28px;}
+.wu-info{flex:1;}
+.wu-title{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent);letter-spacing:0.5px;margin-bottom:2px;}
+.wu-sub{font-size:11px;color:var(--muted);}
+.wu-arr{font-size:18px;color:var(--accent);opacity:0.6;}
+
+/* ── ROUTINES ── */
+.rout-cards{display:flex;flex-direction:column;gap:8px;}
+.rout-card{border-radius:14px;padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all 0.2s;}
+.rout-card:active{transform:scale(0.98);}
+.rout-card.jutro{background:rgba(255,214,10,0.06);border:1px solid rgba(255,214,10,0.2);}
+.rout-card.pauza{background:rgba(124,106,247,0.06);border:1px solid rgba(124,106,247,0.2);}
+.rout-card.vecer{background:rgba(255,77,109,0.06);border:1px solid rgba(255,77,109,0.2);}
+.rout-icon{font-size:24px;}
+.rout-info{flex:1;}
+.rout-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:0.5px;margin-bottom:2px;}
+.rout-card.jutro .rout-title{color:var(--accent3);}
+.rout-card.pauza .rout-title{color:var(--accent4);}
+.rout-card.vecer .rout-title{color:var(--accent2);}
+.rout-sub{font-size:11px;color:var(--muted);}
+.rout-arr{font-size:16px;opacity:0.5;}
+.rout-card.jutro .rout-arr{color:var(--accent3);}
+.rout-card.pauza .rout-arr{color:var(--accent4);}
+.rout-card.vecer .rout-arr{color:var(--accent2);}
+
+/* ── WORKOUT SCREEN ── */
+#workout{background:var(--bg);padding-bottom:80px;}
+.wk-header{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:14px 18px;display:flex;align-items:center;gap:14px;}
+.back-btn{width:34px;height:34px;border-radius:9px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:var(--text);flex-shrink:0;}
+.back-btn:active{transform:scale(0.92);}
+.wk-hinfo{flex:1;}
+.wk-hlabel{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:2px;}
+.wk-htitle{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:0.5px;line-height:1;}
+.prog-wrap{height:2px;background:var(--surface2);position:absolute;bottom:0;left:0;right:0;}
+.prog-fill{height:100%;transition:width 0.4s ease;}
+.phase-nav{display:flex;gap:6px;padding:12px 18px;overflow-x:auto;scrollbar-width:none;}
+.phase-nav::-webkit-scrollbar{display:none;}
+.pnav-btn{flex-shrink:0;padding:6px 14px;border-radius:16px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--muted);transition:all 0.2s;white-space:nowrap;}
+.pnav-btn.active{color:#000;}
+.ex-list{padding:0 18px;}
+.ph-title{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--text);margin-bottom:2px;padding-top:8px;}
+.ph-sub{font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.5;}
+.ex-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:8px;cursor:pointer;transition:all 0.2s;}
+.ex-card.done{border-color:rgba(0,229,160,0.3);background:rgba(0,229,160,0.04);}
+.ex-card:active{transform:scale(0.99);}
+.ex-top{display:flex;align-items:flex-start;gap:10px;}
+.ex-chk{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.2s;margin-top:1px;}
+.ex-card.done .ex-chk{background:var(--accent);border-color:var(--accent);}
+.chk-icon{font-size:11px;color:#000;display:none;}
+.ex-card.done .chk-icon{display:block;}
+.ex-info{flex:1;}
+.ex-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:5px;line-height:1.3;transition:color 0.2s;}
+.ex-card.done .ex-name{text-decoration:line-through;color:var(--muted);}
+.ex-params{display:flex;gap:6px;flex-wrap:wrap;}
+.param-chip{font-size:11px;font-weight:500;padding:2px 8px;border-radius:5px;background:var(--surface2);color:var(--muted);}
+.param-chip.hi{background:rgba(0,229,160,0.12);color:var(--accent);}
+.ex-note{font-size:11px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);line-height:1.5;font-style:italic;}
+.rpe-row{display:flex;align-items:center;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);}
+.rpe-lbl{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+.rpe-dots{display:flex;gap:3px;flex:1;}
+.rpe-dot{flex:1;height:5px;border-radius:2px;background:var(--surface2);}
+.rpe-dot.g7{background:#00e5a0;}.rpe-dot.g8{background:#ffd60a;}.rpe-dot.g9{background:#ff8c42;}.rpe-dot.g10{background:#ff4d6d;}
+.rpe-val{font-size:12px;font-weight:700;}
+.rv7{color:#00e5a0;}.rv8{color:#ffd60a;}.rv9{color:#ff8c42;}.rv10{color:#ff4d6d;}
+.ss-group{border:1px solid rgba(255,214,10,0.2);border-radius:14px;padding:4px;margin-bottom:8px;background:rgba(255,214,10,0.02);}
+.ss-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent3);padding:6px 10px 2px;display:flex;align-items:center;gap:6px;}
+.ss-label::after{content:'';flex:1;height:1px;background:rgba(255,214,10,0.15);}
+.ss-group .ex-card{border:none;border-radius:10px;margin-bottom:4px;}
+.ss-group .ex-card:last-child{margin-bottom:0;}
+.circuit-info{background:rgba(255,77,109,0.1);border:1px solid rgba(255,77,109,0.2);border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:var(--accent2);font-weight:600;}
+
+/* ── TIMER ── */
+.timer-fab{position:fixed;bottom:90px;right:18px;z-index:200;}
+.timer-btn-fab{width:50px;height:50px;border-radius:50%;background:var(--phase-color);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 16px rgba(0,229,160,0.35);transition:all 0.3s;}
+.timer-panel{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);border-radius:22px 22px 0 0;padding:18px 22px 36px;z-index:300;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.32,0.72,0,1);}
+.timer-panel.open{transform:translateY(0);}
+.timer-handle{width:32px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px;}
+.timer-ring{width:110px;height:110px;margin:0 auto 12px;position:relative;}
+.timer-ring svg{transform:rotate(-90deg);}
+.timer-ring-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--text);letter-spacing:1px;}
+circle.bg2{fill:none;stroke:var(--surface2);stroke-width:8;}
+circle.fill2{fill:none;stroke:var(--phase-color);stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke 0.3s;}
+.timer-lbl{text-align:center;font-size:12px;color:var(--muted);margin-bottom:20px;font-weight:500;}
+.timer-presets{display:flex;gap:8px;margin-bottom:16px;justify-content:center;}
+.preset-btn{padding:8px 14px;border-radius:9px;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif;}
+.preset-btn.selected{background:rgba(0,229,160,0.15);border-color:var(--accent);color:var(--accent);}
+.timer-ctrls{display:flex;gap:10px;justify-content:center;}
+.t-action{flex:1;max-width:130px;padding:12px;border-radius:11px;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;}
+.t-start{background:var(--phase-color);color:#000;}
+.t-reset{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
+
+/* ── COMPLETE OVERLAY ── */
+.done-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:400;align-items:center;justify-content:center;padding:24px;}
+.done-overlay.show{display:flex;}
+.done-card{background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:36px 28px;text-align:center;max-width:300px;width:100%;}
+.done-icon{font-size:52px;margin-bottom:14px;}
+.done-title{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--phase-color);letter-spacing:1px;margin-bottom:8px;transition:color 0.3s;}
+.done-sub{font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.done-btn{width:100%;padding:14px;border-radius:11px;background:var(--phase-color);border:none;color:#000;font-size:15px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.3s;}
+
+/* ── ROUTINE & WARMUP SCREENS ── */
+#routine,#warmup{background:var(--bg);}
+.sub-header{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:14px 18px;display:flex;align-items:center;gap:14px;}
+.sub-content{padding:18px 18px 100px;}
+.wu-intro{background:rgba(0,229,160,0.05);border:1px solid rgba(0,229,160,0.15);border-radius:12px;padding:14px;margin-bottom:20px;}
+.wu-intro-title{font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--accent);letter-spacing:1px;margin-bottom:4px;}
+.wu-intro-text{font-size:12px;color:var(--muted);line-height:1.6;}
+.wu-block{margin-bottom:24px;}
+.wu-block-title{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--text);letter-spacing:0.5px;margin-bottom:2px;}
+.wu-block-sub{font-size:12px;color:var(--muted);margin-bottom:12px;}
+.wu-step{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:8px;cursor:pointer;transition:all 0.2s;display:flex;align-items:flex-start;gap:10px;}
+.wu-step.done{border-color:rgba(0,229,160,0.3);background:rgba(0,229,160,0.04);}
+.wu-step.done .ws-name{text-decoration:line-through;color:var(--muted);}
+.ws-num{width:26px;height:26px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--muted);flex-shrink:0;transition:all 0.2s;}
+.wu-step.done .ws-num{background:var(--accent);border-color:var(--accent);color:#000;font-size:12px;}
+.ws-body{flex:1;}
+.ws-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:5px;}
+.ws-params{display:flex;gap:6px;flex-wrap:wrap;}
+.ws-param{font-size:11px;font-weight:500;padding:2px 8px;border-radius:5px;background:var(--surface2);color:var(--muted);}
+.ws-param.green{background:rgba(0,229,160,0.12);color:var(--accent);}
+.ws-note{font-size:11px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);line-height:1.5;font-style:italic;}
+.wu-done-btn{position:fixed;bottom:24px;left:18px;right:18px;background:var(--accent);border:none;border-radius:13px;padding:16px;font-size:15px;font-weight:700;color:#000;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;box-shadow:0 4px 20px rgba(0,229,160,0.3);}
+.wu-done-btn:active{transform:scale(0.97);}
+.rout-intro{border-radius:12px;padding:14px;margin-bottom:20px;}
+.rout-intro.jutro{background:rgba(255,214,10,0.05);border:1px solid rgba(255,214,10,0.15);}
+.rout-intro.pauza{background:rgba(124,106,247,0.05);border:1px solid rgba(124,106,247,0.15);}
+.rout-intro.vecer{background:rgba(255,77,109,0.05);border:1px solid rgba(255,77,109,0.15);}
+.rout-intro-text{font-size:12px;color:var(--muted);line-height:1.6;}
+::-webkit-scrollbar{width:0;}
+</style>
+</head>
+<body>
+
+<!-- ══ HOME SCREEN ══ -->
+<div class="screen active" id="home">
+  <div class="hero" id="main-hero" style="background:linear-gradient(160deg,#0a0a0f 0%,#0f1a14 100%);">
+    <div class="hero-tag" id="hero-tag">Stopar · Pivot · Put do Sezone</div>
+    <div class="hero-title">PRIPREMA<br><em id="hero-em">FAZA 1</em></div>
+  </div>
+
+  <div class="phase-bar">
+    <div class="phase-tabs">
+      <button class="ptab f1 active" onclick="setPhase(1,this)">F1<br><span style="font-size:9px;font-weight:500;">T1-5</span></button>
+      <button class="ptab f2" onclick="setPhase(2,this)">F2<br><span style="font-size:9px;font-weight:500;">T6-12</span></button>
+      <button class="ptab f3" onclick="setPhase(3,this)">F3<br><span style="font-size:9px;font-weight:500;">T13-17</span></button>
+      <button class="ptab fd" onclick="setPhase(4,this)">DL<br><span style="font-size:9px;font-weight:500;">T18</span></button>
+    </div>
+    <div class="timeline">
+      <div class="timeline-fill" id="tl-fill" style="width:5%;background:var(--accent);"></div>
+    </div>
+    <div class="week-dots">
+      <span class="wdot active" id="wd1">T1</span>
+      <span class="wdot" id="wd5">T5</span>
+      <span class="wdot" id="wd12">T12</span>
+      <span class="wdot" id="wd17">T17</span>
+      <span class="wdot" id="wd18">T18</span>
+    </div>
+    <div class="week-sel">
+      <button class="week-btn" onclick="changeWeek(-1)">‹</button>
+      <div class="week-label" id="week-label">Tjedan 1</div>
+      <button class="week-btn" onclick="changeWeek(1)">›</button>
+    </div>
+  </div>
+
+  <div class="phase-info f1" id="phase-info-card" style="margin:16px 20px 0;">
+    <div class="pi-title" id="pi-title" style="color:var(--accent);">🟢 FAZA 1 — Probudi tijelo</div>
+    <div class="pi-text" id="pi-text">Rutina, baza, gubitak masnoće. Tehnika priority — ne juriš težine. Bicikl 3x tjedno kao glavni alat za mršavljenje.</div>
+    <div class="pi-chips" id="pi-chips">
+      <span class="pi-chip">⚖️ Cilj: 99-100kg</span>
+      <span class="pi-chip">🍽️ 2200 kcal</span>
+      <span class="pi-chip">💪 170g proteina</span>
+      <span class="pi-chip">📈 +2.5kg/tjedno</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="slabel">Zagrijavanje</div>
+    <div class="wu-banner" onclick="openWarmup()">
+      <div class="wu-icon">🔥</div>
+      <div class="wu-info">
+        <div class="wu-title">ZAGRIJAVANJE</div>
+        <div class="wu-sub">9 vježbi · 3 bloka · ~12 minuta · Uvijek prvo</div>
+      </div>
+      <div class="wu-arr">›</div>
+    </div>
+
+    <div class="slabel">Treninzi ovog tjedna</div>
+    <div class="tcards" id="training-cards"></div>
+
+    <div class="slabel">Raspored tjedna</div>
+    <div class="sched-card" id="sched-card"></div>
+
+    <div class="slabel">Dnevne rutine</div>
+    <div class="rout-cards">
+      <div class="rout-card jutro" onclick="openRoutine('jutro')">
+        <div class="rout-icon">🌅</div>
+        <div class="rout-info">
+          <div class="rout-title">JUTARNJA RUTINA</div>
+          <div class="rout-sub">4 vježbe · 10 min · Prije kave</div>
+        </div>
+        <div class="rout-arr">›</div>
+      </div>
+      <div class="rout-card pauza" onclick="openRoutine('pauza')">
+        <div class="rout-icon">💻</div>
+        <div class="rout-info">
+          <div class="rout-title">PAUZA NA POSLU</div>
+          <div class="rout-sub">3 vježbe · 2 min · Svaki sat</div>
+        </div>
+        <div class="rout-arr">›</div>
+      </div>
+      <div class="rout-card vecer" onclick="openRoutine('vecer')">
+        <div class="rout-icon">🌙</div>
+        <div class="rout-info">
+          <div class="rout-title">VEČERNJA RUTINA</div>
+          <div class="rout-sub">3 vježbe · 5 min · Prije spavanja</div>
+        </div>
+        <div class="rout-arr">›</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PROGRESS SCREEN ══ -->
+<div class="screen" id="progress">
+  <div class="hero" style="background:linear-gradient(160deg,#0a0a0f 0%,#0a0f1a 100%);">
+    <div class="hero-tag" style="color:var(--accent4);">Mjerim napredak</div>
+    <div class="hero-title" style="font-size:46px;">NAPREDAK<br><em style="color:var(--accent4);">SEZONA</em></div>
+  </div>
+  <div class="content">
+    <!-- SHEETS SETUP -->
+    <div id="sheets-setup" class="prog-card" style="border-color:rgba(124,106,247,0.3);">
+      <div class="prog-title" style="color:var(--accent4);">📊 Google Sheets Backup</div>
+      <div class="prog-sub">Jednom postavi — svi podaci se automatski šalju u tvoj Sheet kao backup.</div>
+      <div class="prog-entry">
+        <input class="prog-input" id="sheets-url-input" type="url" placeholder="https://script.google.com/macros/s/...">
+        <button class="prog-btn" style="background:var(--accent4);color:#fff;" onclick="saveSheetsUrl()">Spremi</button>
+      </div>
+    </div>
+    <div id="sheets-connected" style="display:none;background:rgba(0,229,160,0.06);border:1px solid rgba(0,229,160,0.2);border-radius:14px;padding:14px 16px;margin-bottom:10px;align-items:center;gap:12px;">
+      <span style="font-size:20px;">✅</span>
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:600;color:var(--accent);">Google Sheets spojen</div>
+        <div style="font-size:11px;color:var(--muted);">Podaci se automatski šalju kao backup</div>
+      </div>
+      <button onclick="resetSheetsUrl()" style="font-size:11px;color:var(--muted);background:transparent;border:none;cursor:pointer;text-decoration:underline;">Promijeni</button>
+    </div>
+
+    <div class="slabel">Tjelesna težina</div>
+    <div class="prog-card">
+      <div class="prog-title">⚖️ Kilogrami</div>
+      <div class="prog-sub">Mjeris svaki ponedjeljak ujutro natašte. Cilj: 93kg do 1.9.</div>
+      <div class="prog-entry">
+        <input class="prog-input" id="inp-kg" type="number" step="0.1" placeholder="npr. 103.5">
+        <button class="prog-btn" onclick="saveMetric('kg')">Spremi</button>
+      </div>
+      <div class="prog-history" id="hist-kg"></div>
+    </div>
+
+    <div class="slabel">Eksplozivnost — CMJ</div>
+    <div class="prog-card">
+      <div class="prog-title">⬆️ Counter Movement Jump</div>
+      <div class="prog-sub">Mjeriš visinu skoka jednom tjedno na Treningu B. Koristi app za mjerenje ili označi zid.</div>
+      <div class="prog-entry">
+        <input class="prog-input" id="inp-cmj" type="number" step="0.5" placeholder="npr. 38 (cm)">
+        <button class="prog-btn" onclick="saveMetric('cmj')">Spremi</button>
+      </div>
+      <div class="prog-history" id="hist-cmj"></div>
+    </div>
+
+    <div class="slabel">Horizontalna eksplozivnost — Broad Jump</div>
+    <div class="prog-card">
+      <div class="prog-title">➡️ Broad Jump</div>
+      <div class="prog-sub">Mjeriš udaljenost skoka svaki tjedan na Treningu B. Označi startnu i krajnju točku.</div>
+      <div class="prog-entry">
+        <input class="prog-input" id="inp-bj" type="number" step="1" placeholder="npr. 215 (cm)">
+        <button class="prog-btn" onclick="saveMetric('bj')">Spremi</button>
+      </div>
+      <div class="prog-history" id="hist-bj"></div>
+    </div>
+
+    <div class="slabel">Snaga — Čučanj Max</div>
+    <div class="prog-card">
+      <div class="prog-title">🏋️ Čučanj Max (1RM)</div>
+      <div class="prog-sub">Mjeriš na kraju svake faze. Cilj Faza 1: 130kg. Cilj kraj pripreme: 150kg+.</div>
+      <div class="prog-entry">
+        <input class="prog-input" id="inp-sq" type="number" step="2.5" placeholder="npr. 110 (kg)">
+        <button class="prog-btn" onclick="saveMetric('sq')">Spremi</button>
+      </div>
+      <div class="prog-history" id="hist-sq"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ WORKOUT SCREEN ══ -->
+<div class="screen" id="workout">
+  <div class="wk-header">
+    <div class="back-btn" onclick="goHome()">←</div>
+    <div class="wk-hinfo">
+      <div class="wk-hlabel" id="wh-label">Trening A</div>
+      <div class="wk-htitle" id="wh-title">Snaga + Donji</div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);font-weight:600;" id="prog-text">0/0</div>
+    <div class="prog-wrap"><div class="prog-fill" id="prog-bar" style="width:0%;background:var(--accent);"></div></div>
+  </div>
+  <div class="phase-nav" id="phase-nav"></div>
+  <div class="ex-list" id="ex-list"></div>
+  <div class="timer-fab"><button class="timer-btn-fab" onclick="toggleTimer()">⏱</button></div>
+</div>
+
+<!-- ══ TIMER ══ -->
+<div class="timer-panel" id="timer-panel">
+  <div class="timer-handle"></div>
+  <div class="timer-ring">
+    <svg width="110" height="110" viewBox="0 0 120 120">
+      <circle class="bg2" cx="60" cy="60" r="52"/>
+      <circle class="fill2" id="timer-circle" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="0"/>
+    </svg>
+    <div class="timer-ring-text" id="timer-display">45</div>
+  </div>
+  <div class="timer-lbl" id="timer-label">Odaberi pauzu</div>
+  <div class="timer-presets">
+    <button class="preset-btn" onclick="setPreset(30,this)">30s</button>
+    <button class="preset-btn selected" onclick="setPreset(45,this)">45s</button>
+    <button class="preset-btn" onclick="setPreset(60,this)">60s</button>
+    <button class="preset-btn" onclick="setPreset(90,this)">90s</button>
+  </div>
+  <div class="timer-ctrls">
+    <button class="t-action t-reset" onclick="resetTimer()">Reset</button>
+    <button class="t-action t-start" id="timer-start-btn" onclick="toggleTimerRun()">Start</button>
+  </div>
+</div>
+
+<!-- ══ COMPLETE ══ -->
+<div class="done-overlay" id="done-overlay">
+  <div class="done-card">
+    <div class="done-icon">🔥</div>
+    <div class="done-title" id="done-title">ODLIČNO!</div>
+    <div class="done-sub">Trening završen. Tijelo radi za tebe čak i dok odmараš.</div>
+    <button class="done-btn" id="done-btn" onclick="finishWorkout()">Zatvori</button>
+  </div>
+</div>
+
+<!-- ══ WARMUP ══ -->
+<div class="screen" id="warmup">
+  <div class="sub-header">
+    <div class="back-btn" onclick="goHome()">←</div>
+    <div class="wk-hinfo">
+      <div class="wk-hlabel">Svaki trening — uvijek prvo</div>
+      <div class="wk-htitle" style="color:var(--accent);">🔥 ZAGRIJAVANJE</div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);font-weight:600;" id="wu-prog">0/9</div>
+  </div>
+  <div class="sub-content">
+    <div class="wu-intro">
+      <div class="wu-intro-title">ZAŠTO JE ZAGRIJAVANJE OBAVEZNO</div>
+      <div class="wu-intro-text">Preskočiš zagrijavanje = povećaš rizik od ozljede za 40-60%. Za tebe post-ACL i s poviješću ozljeda lože — ovo nije opcija. 12 minuta koje štite ostatak treninga.</div>
+    </div>
+    <div class="wu-block">
+      <div class="wu-block-title">Blok 1 — Mobilnost</div>
+      <div class="wu-block-sub">Otvori zglobove koji su se zatvorili od sjedenja. ~4 minute.</div>
+      <div class="wu-step" id="ws-0" onclick="toggleWS(0)">
+        <div class="ws-num">1</div>
+        <div class="ws-body">
+          <div class="ws-name">Hip 90/90 Stretch</div>
+          <div class="ws-params"><span class="ws-param green">60s/strana</span></div>
+          <div class="ws-note">Sjedni na pod, oba koljena u kut 90°. Otvara kuk zatvorен od sjedenja. Najvažnija vježba u zagrijanвanju za tebe post-op.</div>
+        </div>
+      </div>
+      <div class="wu-step" id="ws-1" onclick="toggleWS(1)">
+        <div class="ws-num">2</div>
+        <div class="ws-body">
+          <div class="ws-name">World's Greatest Stretch</div>
+          <div class="ws-params"><span class="ws-param green">5/strana</span></div>
+          <div class="ws-note">Korak naprijed u lunge, ruka na pod, rotiraj gore prema stropu. Jedna vježba koja radi kuk, lopatica, torakalna kralježnica. Radi sporo.</div>
+        </div>
+      </div>
+      <div class="wu-step" id="ws-2" onclick="toggleWS(2)">
+        <div class="ws-num">3</div>
+        <div class="ws-body">
+          <div class="ws-name">Glute Bridge s pauzom</div>
+          <div class="ws-params"><span class="ws-param green">2 × 15</span><span class="ws-param">drži 1s gore</span></div>
+          <div class="ws-note">Aktivira gluteus koji se "zaspao" od sjedenja. Bez ovoga koljeno preuzima posao gluteusa — direktan uzrok ozljede koljena.</div>
+        </div>
+      </div>
+    </div>
+    <div class="wu-block">
+      <div class="wu-block-title">Blok 2 — Aktivacija</div>
+      <div class="wu-block-sub">Probudi mišiće koji će raditi. ~4 minute.</div>
+      <div class="wu-step" id="ws-3" onclick="toggleWS(3)">
+        <div class="ws-num">4</div>
+        <div class="ws-body">
+          <div class="ws-name">Banded Clamshell</div>
+          <div class="ws-params"><span class="ws-param green">2 × 15/strana</span></div>
+          <div class="ws-note">Guma oko koljena, leži na boku, otvori koljeno gore. Aktivira gluteus medius — stabilizator koljena pri trčanju i skokovima.</div>
+        </div>
+      </div>
+      <div class="wu-step" id="ws-4" onclick="toggleWS(4)">
+        <div class="ws-num">5</div>
+        <div class="ws-body">
+          <div class="ws-name">Wall Ankle Mobility</div>
+          <div class="ws-params"><span class="ws-param green">10/strana</span></div>
+          <div class="ws-note">Stani 10cm od zida, gurni koljeno prema zidu dotičući ga. Mobilnost gležnja direktno utječe na dubinu i sigurnost čučnja.</div>
+        </div>
+      </div>
+      <div class="wu-step" id="ws-5" onclick="toggleWS(5)">
+        <div class="ws-num">6</div>
+        <div class="ws-body">
+          <div class="ws-name">Bodyweight čučanj s pauzom</div>
+          <div class="ws-params"><span class="ws-param green">2 × 10</span><span class="ws-param">drži 2s dolje</span></div>
+          <div class="ws-note">Puna amplituda, peta na tlu, drži 2 sekunde u dnu. Priprema koljena i kuka za opterećenje. NE juriti.</div>
+        </div>
+      </div>
+    </div>
+    <div class="wu-block">
+      <div class="wu-block-title">Blok 3 — Nervni sustav</div>
+      <div class="wu-block-sub">Probudi eksplozivnost. Tijelo mora znati da dolaze brzi pokreti. ~4 minute.</div>
+      <div class="wu-step" id="ws-6" onclick="toggleWS(6)">
+        <div class="ws-num">7</div>
+        <div class="ws-body">
+          <div class="ws-name">Skip A</div>
+          <div class="ws-params"><span class="ws-param green">2 × 15m</span></div>
+          <div class="ws-note">Koljena gore, ritmično, ruke suprotno od nogu. Lagano — nije sprint. Aktivira hip flexore i koordinaciju.</div>
+        </div>
+      </div>
+      <div class="wu-step" id="ws-7" onclick="toggleWS(7)">
+        <div class="ws-num">8</div>
+        <div class="ws-body">
+          <div class="ws-name">Lateralni Shuffle</div>
+          <div class="ws-params"><span class="ws-param green">2 × 10m lijevo/desno</span></div>
+          <div class="ws-note">Niska pozicija, brzi bočni koraci. Ne križi noge. Imitira kretanje stopara i pivota u igri.</div>
+        </div>
+      </div>
+      <div class="wu-step" id="ws-8" onclick="toggleWS(8)">
+        <div class="ws-num">9</div>
+        <div class="ws-body">
+          <div class="ws-name">Submaksimalni Sprinti</div>
+          <div class="ws-params"><span class="ws-param green">3-4 × 20m na 80%</span><span class="ws-param">pauza 30s</span></div>
+          <div class="ws-note">NE 100% — 80% je dovoljno da se nervni sustav probudi. Puna brzina bez pripreme = ozljeda lože.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button class="wu-done-btn" onclick="goHome()">✓ Zagrijavanje završeno — natrag</button>
+</div>
+
+<!-- ══ ROUTINE ══ -->
+<div class="screen" id="routine">
+  <div class="sub-header">
+    <div class="back-btn" onclick="goHome()">←</div>
+    <div class="wk-hinfo">
+      <div class="wk-hlabel" id="rout-label">Svaki dan</div>
+      <div class="wk-htitle" id="rout-title">Jutarnja rutina</div>
+    </div>
+    <div style="font-size:12px;color:var(--muted);font-weight:600;" id="rout-prog">0/0</div>
+  </div>
+  <div class="sub-content" id="rout-steps"></div>
+</div>
+
+<!-- ══ BOTTOM NAV ══ -->
+<div class="bnav">
+  <button class="bnav-btn active" id="bnav-home" onclick="showTab('home')"><span class="bnav-icon">🏠</span>Plan</button>
+  <button class="bnav-btn" id="bnav-progress" onclick="showTab('progress')"><span class="bnav-icon">📈</span>Napredak</button>
+</div>
+
+<script>
+// ══ PHASE DATA ══
+const PHASES = {
+  1:{
+    name:'FAZA 1', sub:'Probudi tijelo', weeks:'T1-5', color:'#00e5a0', cssVar:'var(--accent)',
+    title:'🟢 FAZA 1 — Probudi tijelo',
+    text:'Rutina, baza, gubitak masnoće. Tehnika priority — ne juriš težine. Bicikl 3x tjedno kao glavni alat za mršavljenje.',
+    chips:['⚖️ Cilj: 99-100kg','🍽️ 2200 kcal','💪 170g proteina','📈 +2.5kg/tjedno'],
+    cls:'f1', gradient:'linear-gradient(160deg,#0a0a0f 0%,#0f1a14 100%)',
+    schedule:[
+      {day:'Pon',act:'🚴 Bicikl 45 min navečer',badge:'Aerobno',bs:'sb-b'},
+      {day:'Uto',act:'🏋️ Trening A — Snaga + Donji (6:30 ujutro)',badge:'Snaga',bs:'sb-s'},
+      {day:'Sri',act:'🏋️ Trening B — Plyometrija + Sprintovi (6:30)',badge:'Plyo',bs:'sb-e'},
+      {day:'Čet',act:'🏁 Trening C — Teren Sprint + Agility',badge:'Teren',bs:'sb-t'},
+      {day:'Pet',act:'💀 RDL + Nordic (20 min) + 🚴 Bicikl navečer',badge:'Kratko',bs:'sb-s'},
+      {day:'Sub',act:'🚴 Bicikl 60 min jutro',badge:'Aerobno',bs:'sb-b'},
+      {day:'Ned',act:'😴 Odmor — nepregovarivo',badge:'Odmor',bs:'sb-o'},
+    ]
+  },
+  2:{
+    name:'FAZA 2', sub:'Gradi motor', weeks:'T6-12', color:'#ffd60a', cssVar:'var(--accent3)',
+    title:'🟡 FAZA 2 — Gradi motor',
+    text:'Intenzitet raste. Težine na čučnju agresivno rastu. Plyometrija postaje zahtjevnija. Depth jump i reactive sprint ulaze u plan.',
+    chips:['⚖️ Cilj: 96-97kg','🍽️ 2300 kcal','💪 170g proteina','🎯 Čučanj 130kg+'],
+    cls:'f2', gradient:'linear-gradient(160deg,#0a0a0f 0%,#14140a 100%)',
+    schedule:[
+      {day:'Pon',act:'🚴 Bicikl 45 min navečer',badge:'Aerobno',bs:'sb-b'},
+      {day:'Uto',act:'🏋️ Trening A — Snaga Heavy (6:30 ujutro)',badge:'Heavy',bs:'sb-s'},
+      {day:'Sri',act:'🏋️ Trening B — Depth Jump + Sprintovi (6:30)',badge:'Plyo',bs:'sb-e'},
+      {day:'Čet',act:'🏁 Trening C — Teren (dulje i teže)',badge:'Teren',bs:'sb-t'},
+      {day:'Pet',act:'💀 RDL heavy + Nordic + 🚴 Bicikl',badge:'Kratko',bs:'sb-s'},
+      {day:'Sub',act:'🚴 Bicikl 60-75 min + intervali',badge:'Aerobno',bs:'sb-b'},
+      {day:'Ned',act:'😴 Odmor — nepregovarivo',badge:'Odmor',bs:'sb-o'},
+    ]
+  },
+  3:{
+    name:'FAZA 3', sub:'Postani igrač', weeks:'T13-17', color:'#ff4d6d', cssVar:'var(--accent2)',
+    title:'🔴 FAZA 3 — Postani igrač',
+    text:'Volumen pada, intenzitet maksimalan. Repeated sprint ability. Specifičan fudbalski rad s loptom svaki tjedan. Probne utakmice ako možeš.',
+    chips:['⚖️ Cilj: 93-94kg','🍽️ 2400 kcal','💪 175g proteina','⚡ RSA fokus'],
+    cls:'f3', gradient:'linear-gradient(160deg,#0a0a0f 0%,#1a0a0f 100%)',
+    schedule:[
+      {day:'Pon',act:'🚴 Bicikl 45 min + tehnika s loptom',badge:'Sport',bs:'sb-b'},
+      {day:'Uto',act:'🏋️ Trening A — Max snaga (6:30 ujutro)',badge:'Maks',bs:'sb-s'},
+      {day:'Sri',act:'🏋️ Trening B — Reaktivna plyo + sprintovi',badge:'Plyo',bs:'sb-e'},
+      {day:'Čet',act:'🏁 Trening C — RSA + agility + lopta',badge:'Teren',bs:'sb-t'},
+      {day:'Pet',act:'💀 RDL + Nordic + tehnika (30 min)',badge:'Kratko',bs:'sb-s'},
+      {day:'Sub',act:'⚽ Probna utakmica ili scrimmage',badge:'Utakmica',bs:'sb-t'},
+      {day:'Ned',act:'😴 Odmor — nepregovarivo',badge:'Odmor',bs:'sb-o'},
+    ]
+  },
+  4:{
+    name:'DELOAD', sub:'Superkompenzacija', weeks:'T18', color:'#7c6af7', cssVar:'var(--accent4)',
+    title:'🟣 DELOAD — Superkompenzacija',
+    text:'50% volumena, isti pokreti, lagane težine. Nema novih podražaja. Tijelo se oporavlja i postaje jače. Ulaziš odmoran i nabijen 1.9.',
+    chips:['⚖️ Cilj: 93kg','🍽️ 2500 kcal','🔋 Punjenje glikogena','😴 Prioritet spavanja'],
+    cls:'fd', gradient:'linear-gradient(160deg,#0a0a0f 0%,#0f0a1a 100%)',
+    schedule:[
+      {day:'Pon',act:'🚴 Bicikl 30 min lagano',badge:'Lagano',bs:'sb-b'},
+      {day:'Uto',act:'🏋️ Trening A — 50% težine, isti pokreti',badge:'Lagano',bs:'sb-s'},
+      {day:'Sri',act:'🏋️ Trening B — Lagana plyo, bez sprintova',badge:'Lagano',bs:'sb-e'},
+      {day:'Čet',act:'🚶 Šetnja + tehnika s loptom',badge:'Aktivan',bs:'sb-o'},
+      {day:'Pet',act:'😴 Odmor',badge:'Odmor',bs:'sb-o'},
+      {day:'Sub',act:'⚽ Lagani trening kluba ako ima',badge:'Lagano',bs:'sb-t'},
+      {day:'Ned',act:'😴 Odmor — 1.9. sezona počinje!',badge:'Odmor',bs:'sb-o'},
+    ]
+  }
+};
+
+// ══ WORKOUTS — All Phases ══
+const WORKOUTS = {
+  a_f1:{label:'TRENING A',title:'Snaga + Donji',color:'#00e5a0',phase:'F1',phases:[
+    {id:'glavni',name:'💪 Glavni Pokreti',subtitle:'Tjedan 1-5: Čučanj 4x6 RPE7→8, RDL 4x6. +2.5kg svaki tjedan dok forma drži.',exercises:[
+      {name:'Slobodni Čučanj — puna amplituda',sets:'4x6',reps:'6 reps',rest:'90s',rpe:7,note:'Tjedan 1-2: RPE 7, nađi težinu. Tjedan 3-5: RPE 8, +2.5kg tjedno. Koljena prate prste, ne urušavaju se unutra. Puna amplituda uvijek.'},
+      {name:'Romanian Deadlift',sets:'4x6',reps:'6 reps',rest:'60s',rpe:8,note:'Kontrolirani spust 3 sekunde, eksplozivno gore. Šipka blizu tijela. +2.5kg svaki tjedan.'},
+    ]},
+    {id:'unilat',name:'🦵 Unilateralni + Prevencija',subtitle:'Svaka noga posebno — otkriva i ispravlja asimetrije post-op.',exercises:[
+      {superset:true,exercises:[
+        {name:'Bulgarian Split Squat',sets:'3x8',reps:'8/noga',rest:'45s',rpe:7,note:'S laganim utegom ili bez. Fokus na tehnici, ne težini. Prednja noga radi, stražnja balansira.'},
+        {name:'Nordic Curl',sets:'3x6',reps:'6 reps',rest:'45s',rpe:8,note:'SUPERSET. Obavezno — najvažnija prevencija lože. Spuštaj 4-5 sekundi, što sporije možeš.'}
+      ]},
+      {name:'Hip Thrust sa šipkom',sets:'3x10',reps:'10 reps',rest:'45s',rpe:7,note:'Gluteusi koji rade = koljeno koje je zaštićeno. Drži 1s gore i stisni.'},
+      {name:'Copenhagen Plank',sets:'3x20s',reps:'20s/strana',rest:'30s',rpe:7,note:'Bočni plank s nogom na klupi. Prevencija prepona — najtipičnija ozljeda stopara.'},
+    ]},
+    {id:'gornji-min',name:'💪 Gornji — Minimum',subtitle:'8 minuta. Dovoljno za zdravlje ramena od sjedilačkog posla.',exercises:[
+      {superset:true,exercises:[
+        {name:'Bent Over Row',sets:'2x10',reps:'10 reps',rest:'30s',rpe:6,note:'Zdravlje ramena i posture. Jedini razlog za gornji rad.'},
+        {name:'Push Up varijacija',sets:'2x15',reps:'15 reps',rest:'30s',rpe:6,note:'SUPERSET. Balans push/pull. Brzo i gotovo.'}
+      ]}
+    ]}
+  ]},
+  a_f2:{label:'TRENING A',title:'Snaga Heavy',color:'#00e5a0',phase:'F2',phases:[
+    {id:'glavni',name:'💪 Glavni Pokreti — Heavy',subtitle:'Tjedan 6-12: Čučanj 4x5 RPE8-9. Agresivna progresija. Forma priority.',exercises:[
+      {name:'Slobodni Čučanj — puna amplituda',sets:'4x5',reps:'5 reps',rest:'90s',rpe:8,note:'RPE 8-9. Zadnja serija treba biti naporna ali čista. +2.5kg tjedno. Ovo je gdje gradiš motor.'},
+      {name:'Romanian Deadlift',sets:'4x6',reps:'6 reps',rest:'60s',rpe:8,note:'+2.5kg tjedno. Već imaš bazu iz F1 — sada dižeš agresivno. Kontrola uvijek.'},
+    ]},
+    {id:'unilat',name:'🦵 Unilateralni + Plyo Završetak',subtitle:'Pojačano — Nordic curl na 8 reps, dodaje se plyometrijski završetak.',exercises:[
+      {superset:true,exercises:[
+        {name:'Bulgarian Split Squat',sets:'3x8',reps:'8/noga',rest:'45s',rpe:8,note:'S utegom — povećavaš svaki tjedan. 17mj post-op, možeš opteretiti.'},
+        {name:'Nordic Curl',sets:'3x8',reps:'8 reps',rest:'45s',rpe:9,note:'SUPERSET. Povećano s 6 na 8 reps. Spust 4-5 sekundi svaki put.'}
+      ]},
+      {name:'Hip Thrust sa šipkom',sets:'3x12',reps:'12 reps',rest:'45s',rpe:8,note:'Povećano na 12 reps. Progresivno povećavaj težinu.'},
+      {name:'Copenhagen Plank',sets:'3x30s',reps:'30s/strana',rest:'30s',rpe:8,note:'Povećano na 30s. Ako je prelako — podigne kukove malo više.'},
+    ]},
+    {id:'plyo-end',name:'⚡ Plyometrijski Završetak',subtitle:'Na kraju Treninga A u Fazi 2. Signal tijelu da treba biti brzo, ne samo jako.',exercises:[
+      {name:'Box Jump',sets:'3x5',reps:'5 reps',rest:'90s',rpe:8,note:'Meki doskok kao mačka. Počni s 40-50cm boxom, postepeno povećavaj visinu tjedno.'},
+      {name:'Broad Jump',sets:'3x4',reps:'4 skoka',rest:'60s',rpe:8,note:'Mjeri udaljenost svaki tjedan — ovo je tvoj indikator napretka eksplozivnosti.'}
+    ]},
+    {id:'gornji-min',name:'💪 Gornji — Minimum',subtitle:'8 minuta.',exercises:[
+      {superset:true,exercises:[
+        {name:'Bent Over Row',sets:'2x10',reps:'10 reps',rest:'30s',rpe:6,note:'Zdravlje ramena i posture.'},
+        {name:'Push Up varijacija',sets:'2x15',reps:'15 reps',rest:'30s',rpe:6,note:'SUPERSET.'}
+      ]}
+    ]}
+  ]},
+  a_f3:{label:'TRENING A',title:'Max Snaga',color:'#00e5a0',phase:'F3',phases:[
+    {id:'glavni',name:'💪 Maksimalna Snaga',subtitle:'Tjedan 13-17: Manji volumen, maksimalni intenzitet. Čuvamo mišiće za sezonu.',exercises:[
+      {name:'Slobodni Čučanj — puna amplituda',sets:'4x3',reps:'3 reps',rest:'120s',rpe:9,note:'RPE 9. Manje reps, maksimalni napor. Ovo je blizu tvog 1RM. Svaki set mora biti maksimalan.'},
+      {name:'Romanian Deadlift',sets:'3x5',reps:'5 reps',rest:'90s',rpe:9,note:'Smanjen volumen ali povećana težina. Faza 3 je o intenzitetu, ne volumenu.'},
+    ]},
+    {id:'unilat',name:'🦵 Unilateralni + Kompleks',subtitle:'Plyo kompleks integriran — eksplozivnost i snaga u istom bloku.',exercises:[
+      {superset:true,exercises:[
+        {name:'Bulgarian Split Squat',sets:'3x6',reps:'6/noga',rest:'60s',rpe:9,note:'Maksimalni uteg koji možeš s čistom formom. 6 reps, ne 8.'},
+        {name:'Nordic Curl',sets:'3x8',reps:'8 reps',rest:'45s',rpe:9,note:'SUPERSET. Nikad ne izostavljaš — cijela sezona.'}
+      ]},
+      {name:'Hip Thrust sa šipkom',sets:'3x10',reps:'10 reps',rest:'45s',rpe:8,note:'Teže nego F2. Snažni gluteusi = zaštita koljena na terenu.'},
+      {name:'Copenhagen Plank',sets:'3x30s',reps:'30s/strana',rest:'30s',rpe:8,note:'Održavaš — prevencija je prioritet cijele sezone.'},
+    ]},
+    {id:'plyo-complex',name:'⚡ Plyometrijski Kompleks',subtitle:'Integriran u kraj Treninga A. Kombinacija snage i eksplozivnosti.',exercises:[
+      {name:'Depth Jump → Immediate Box Jump',sets:'4x4',reps:'4 reps',rest:'90s',rpe:9,note:'Skoči s kutije, čim dotakneš tlo odmah eksplodiraš na drugi box. Ovo je reaktivna snaga — ključna za stopara pri duelu.'},
+      {name:'Single Leg Broad Jump',sets:'3x4',reps:'4/noga',rest:'60s',rpe:8,note:'Jednonožni skok naprijed — gradi asimetričnu eksplozivnost. Prva noga je uvijek slabija, fokus na nju.'}
+    ]}
+  ]},
+  b_f1:{label:'TRENING B',title:'Plyometrija + Sprintovi',color:'#ffd60a',phase:'F1',phases:[
+    {id:'vert',name:'⬆️ Vertikalna Eksplozivnost',subtitle:'Skok za glavom — oružje stopara. Uvijek na početku dok si svjež.',exercises:[
+      {name:'Box Jump',sets:'4x4',reps:'4 reps',rest:'90s',rpe:7,note:'Faza 1: nizak box (35-40cm). Fokus na MEK doskok. Slijeti tiho kao mačka. Ne juriti visinu — juriti tehniku.'},
+      {name:'Counter Movement Jump (CMJ)',sets:'3x4',reps:'4 reps',rest:'75s',rpe:7,note:'Mjeri visinu svaki tjedan — ovo je tvoj glavni indikator napretka. Ruke gore u skoku.'},
+    ]},
+    {id:'horiz',name:'➡️ Horizontalna Eksplozivnost',subtitle:'Akceleracija stopara — prvih 5 metara određuje igru.',exercises:[
+      {name:'Broad Jump',sets:'3x4',reps:'4 skoka',rest:'60s',rpe:7,note:'Mjeri udaljenost svaki tjedan. Bilježi u Napredak ekran. Ovo je tvoj horizontalni benchmark.'},
+      {name:'Lateral Bound',sets:'3x5',reps:'5/strana',rest:'45s',rpe:7,note:'Eksplozivni bočni skok. Meki doskok, stabilizacija. Gradi bočni prvi korak stopara.'},
+    ]},
+    {id:'sprint',name:'⚡ Sprint Protokol F1',subtitle:'6 sprintova dok si svjež. Fokus na akceleraciju — prvih 5 metara.',exercises:[
+      {name:'Akceleracijski Sprint 15m',sets:'6x15m',reps:'15 metara',rest:'60s',rpe:8,note:'Tjedan 1-2: 6 sprintova. Tjedan 3-5: 8 sprintova. Start pozicija: stojeći, čučanj, ležanje — varij svaki sprint. FOKUS na prvih 5 metara.'},
+    ]}
+  ]},
+  b_f2:{label:'TRENING B',title:'Depth Jump + Sprintovi',color:'#ffd60a',phase:'F2',phases:[
+    {id:'vert',name:'⬆️ Reaktivna Eksplozivnost',subtitle:'Depth jump umjesto box jump — reaktivnost je ključ za stopara.',exercises:[
+      {name:'Depth Jump',sets:'4x4',reps:'4 reps',rest:'90s',rpe:8,note:'Skoči s kutije (40-50cm), čim dotakneš tlo — ODMAH eksplodiraš gore. Minimalni kontakt s tlom. Ovo je reaktivni skok koji koristiš u duelu za loptu.'},
+      {name:'Counter Movement Jump (CMJ)',sets:'4x5',reps:'5 reps',rest:'75s',rpe:8,note:'Povećano na 4x5. Mjeri visinu svaki tjedan. Cilj Faza 2: +3-5cm od startne točke.'},
+    ]},
+    {id:'horiz',name:'➡️ Pojačana Horizontalna Plyo',subtitle:'Više serija, više intenziteta.',exercises:[
+      {name:'Broad Jump',sets:'4x4',reps:'4 skoka',rest:'60s',rpe:8,note:'Povećano na 4x4. Mjeri udaljenost. Usporedi s Fazom 1 — treba biti primjetno dalje.'},
+      {name:'Lateral Bound',sets:'3x6',reps:'6/strana',rest:'45s',rpe:8,note:'Povećano na 6/strana. Brži tempo između skokova.'},
+    ]},
+    {id:'sprint',name:'⚡ Sprint Protokol F2',subtitle:'8+4 sprintova. Dodaje se reaktivni start.',exercises:[
+      {name:'Akceleracijski Sprint 15m',sets:'8x15m',reps:'15 metara',rest:'45s',rpe:9,note:'8 sprintova, odmor 45s. Pratiti pad brzine — zadnji ne smije biti >10% sporiji od prvog.'},
+      {name:'Reaktivni Start 15m',sets:'4x15m',reps:'15 metara',rest:'45s',rpe:9,note:'Na vizualni ili zvučni signal — eksplodiraš. Sam ili s partnerom. Trenira reakcijsko vrijeme stopara.'},
+    ]}
+  ]},
+  b_f3:{label:'TRENING B',title:'Reaktivna Plyo + Sprintovi',color:'#ffd60a',phase:'F3',phases:[
+    {id:'vert',name:'⬆️ Maksimalna Reaktivnost',subtitle:'Faza 3: kompleksni plyometrijski parovi. Snaga odmah iza eksplozivnosti.',exercises:[
+      {name:'Depth Jump → Sprint 10m',sets:'4x4',reps:'4 reps',rest:'90s',rpe:9,note:'Depth jump pa odmah sprint 10m. Ovo simulira situaciju u igri — duel u zraku pa sprint za loptom. Najozbiljnija plyo vježba.'},
+      {name:'CMJ s utegom (weight vest ili bučice)',sets:'4x4',reps:'4 reps',rest:'75s',rpe:9,note:'Mali uteg (5-10kg). Isti pokret, veći napor. Kad skineš uteg na utakmici — osjećaš se nevjerojatno lako.'},
+    ]},
+    {id:'horiz',name:'➡️ Kompleksna Horizontalna Plyo',subtitle:'Jednožni rad — sezona zahtijeva asimetričnu eksplozivnost.',exercises:[
+      {name:'Single Leg Broad Jump',sets:'4x4',reps:'4/noga',rest:'60s',rpe:9,note:'Jednonožni skok. Najvažnija plyo vježba za stopara — svaki dubiozni korak na terenu je jednonožan.'},
+      {name:'Lateral Bound s pauzom',sets:'3x6',reps:'6/strana',rest:'45s',rpe:8,note:'Skoči, slijeti, drži 2s stabilizirajući se, pa eksplodiraš dalje. Gradi stabilnost u eksplozivnosti.'},
+    ]},
+    {id:'sprint',name:'⚡ Sprint Protokol F3 — RSA',subtitle:'Repeated Sprint Ability — sposobnost koja određuje igrača u zadnjih 20 minuta.',exercises:[
+      {name:'Repeated Sprint 20m',sets:'10x20m',reps:'20 metara',rest:'30s',rpe:9,note:'10 sprintova, SAMO 30s odmora. Ovo boli. Ovo simulira futsal. Mjeri pad brzine — cilj je <10% razlike između prvog i zadnjeg.'},
+      {name:'Sprint 40m',sets:'5x40m',reps:'40 metara',rest:'75s',rpe:9,note:'5 dužih sprintova za football. Stopari moraju pokriti veće udaljenosti — top speed je važan.'},
+    ]}
+  ]},
+  c_f1:{label:'TRENING C',title:'Sprint + Agility — Teren',color:'#ff4d6d',phase:'F1',phases:[
+    {id:'sprint',name:'🏃 Sprint Protokol',subtitle:'Repeated sprint ability — baza. Mjeriš pad brzine od 1. do zadnjeg sprinta.',exercises:[
+      {name:'Sprint 20m — Repeated',sets:'6x20m',reps:'20 metara',rest:'45s',rpe:8,note:'Faza 1: 6 sprintova, 45s odmora. Fokus na start iz mirovanja — imitira situaciju stopara koji kreće za napadačem.'},
+      {name:'Sprint 40m',sets:'4x40m',reps:'40 metara',rest:'75s',rpe:8,note:'4 duža sprinta. Razvija top speed koji nedostaje. Odmor duži jer je kvaliteta važnija od umora.'},
+    ]},
+    {id:'agility',name:'🔄 Agility + Promjena Smjera',subtitle:'Direktno simulira kretanje stopara pri pokrivanju napadača.',exercises:[
+      {name:'5-10-5 Shuttle Drill',sets:'5x',reps:'5-10-5m',rest:'45s',rpe:8,note:'3 čunja. Sprint 5m, nazad 5m, sprint 10m. Eksplozivne promjene smjera — najtipičniji pokret stopara u igri. Mjeri vrijeme.'},
+      {name:'T-Drill',sets:'4x',reps:'T obrazac',rest:'60s',rpe:7,note:'Sprint naprijed, bočno lijevo, bočno desno, bočno lijevo, sprint nazad. Kombinira sve smjerove kretanja stopara.'},
+      {name:'Reaktivni Cone Drill',sets:'8 minuta',reps:'kontinuirano',rest:'20s između',rpe:7,note:'Postavi 4-6 čunjeva. Partner pokazuje kamo trčiš — treniraš reaktivnost i čitanje. Ovo razlikuje dobrog od odličnog stopara.'},
+    ]},
+    {id:'futsal',name:'⚽ Futsal Blok',subtitle:'Simulira kretanje pivota. 10 minuta na kraju dok si umoran.',exercises:[
+      {name:'Lateralni Shuttle',sets:'2x30s',reps:'30s',rest:'20s',rpe:7,note:'Bočno 5m lijevo-desno kontinuirano. Direktno simulira pivota u futsalu.'},
+      {name:'Eksplozivni Zaokret 180°',sets:'2x6',reps:'6/strana',rest:'30s',rpe:8,note:'Sprint 5m, nagli zaokret 180°, sprint nazad. Okretanje pivota od obrambenog igrača.'},
+    ]}
+  ]},
+  c_f2:{label:'TRENING C',title:'Sprint + Agility — Pojačano',color:'#ff4d6d',phase:'F2',phases:[
+    {id:'sprint',name:'🏃 Sprint Protokol — Pojačan',subtitle:'Više sprintova, kraći odmor. Repeated sprint ability raste.',exercises:[
+      {name:'Sprint 20m — Repeated',sets:'8x20m',reps:'20 metara',rest:'35s',rpe:9,note:'Faza 2: 8 sprintova, odmor 35s. Pratiti pad brzine svaki tjedan — napredak mora biti vidljiv.'},
+      {name:'Sprint 40m',sets:'5x40m',reps:'40 metara',rest:'70s',rpe:9,note:'5 sprintova. Agresivnije nego F1.'},
+    ]},
+    {id:'agility',name:'🔄 Pojačan Agility',subtitle:'Više serija, kraći odmor, veći intenzitet.',exercises:[
+      {name:'5-10-5 Shuttle Drill',sets:'6x',reps:'5-10-5m',rest:'40s',rpe:9,note:'Povećano na 6 serija. Mjeri i usporedi s Fazom 1 — treba biti brže.'},
+      {name:'T-Drill',sets:'5x',reps:'T obrazac',rest:'55s',rpe:8,note:'5 serija. Fokus na niska pozicija i brze noge.'},
+      {name:'Reaktivni Cone Drill',sets:'10 minuta',reps:'kontinuirano',rest:'20s između',rpe:8,note:'Produženo na 10 minuta. Zahtjevniji partneri ili kompleksniji obrasci.'},
+    ]},
+    {id:'futsal',name:'⚽ Futsal Blok — Pojačan',subtitle:'3 serije umjesto 2.',exercises:[
+      {name:'Lateralni Shuttle',sets:'3x30s',reps:'30s',rest:'15s',rpe:8,note:'Povećano na 3 serije, kraći odmor.'},
+      {name:'Eksplozivni Zaokret 180°',sets:'3x8',reps:'8/strana',rest:'25s',rpe:8,note:'Povećano na 3x8. Kraći odmor.'},
+    ]}
+  ]},
+  c_f3:{label:'TRENING C',title:'RSA + Agility + Lopta',color:'#ff4d6d',phase:'F3',phases:[
+    {id:'sprint',name:'🏃 RSA — Maksimalni Protokol',subtitle:'Repeated Sprint Ability — ovo je razlika između igrača koji traje 90 minuta.',exercises:[
+      {name:'Sprint 20m — RSA Max',sets:'10x20m',reps:'20 metara',rest:'25s',rpe:9,note:'FAZA 3 MAX: 10 sprintova, samo 25s odmora. Zadnji sprint mora biti spreman. Ovo je najteži dio treninga. Ovo te sprema za sezonu.'},
+      {name:'Sprint 40m',sets:'6x40m',reps:'40 metara',rest:'70s',rpe:9,note:'6 sprintova. Zadnji mora biti svjež kao prvi — ako nije, povećaj odmor.'},
+    ]},
+    {id:'agility',name:'🔄 Agility + Lopta',subtitle:'Faza 3: lopta se vraća. Tehnika u umoru — imitira utakmicu.',exercises:[
+      {name:'5-10-5 s loptom',sets:'6x',reps:'5-10-5m',rest:'40s',rpe:8,note:'Isti drill ali sa loptom pri nozi. Kontrola pri promjeni smjera. Ovo je football-specifično.'},
+      {name:'T-Drill reaktivni',sets:'5x',reps:'T obrazac',rest:'50s',rpe:9,note:'Partner pokazuje smjer promjene u zadnjoj sekundi. Trenira donošenje odluka u umoru.'},
+      {name:'1v1 Dueli simulacija',sets:'10 minuta',reps:'kontinuirano',rest:'20s između',rpe:9,note:'Sam ili s partnerom — simuliraj pokrivanje napadača. Lateralno kretanje, zaustavljanje, eksplozija. Ovo je razlog zašto sve ostalo radiš.'},
+    ]},
+    {id:'futsal',name:'⚽ Futsal Kompleks',subtitle:'Maksimalni futsal blok — u umoru jer utakmica završava u umoru.',exercises:[
+      {name:'Lateralni Shuttle pojačan',sets:'4x30s',reps:'30s',rest:'15s',rpe:9,note:'4 serije, samo 15s odmora. Noge gore dok ne gori.'},
+      {name:'Pivot Kompleks',sets:'3x8',reps:'8/strana',rest:'20s',rpe:9,note:'Zaokret 180° + sprint 3m + kontrola lopte. Kompletna simulacija pivota u futsalu.'},
+    ]}
+  ]},
+  rdl:{label:'RDL + NORDIC',title:'Kratki petak (20 min)',color:'#00e5a0',phase:'Sve faze',phases:[
+    {id:'rdl',name:'💀 Petak — Kratko i Gotovo',subtitle:'RDL i Nordic curl odvojeni od čučnja. Ista težina kao Trening A, bez umora.',exercises:[
+      {name:'Romanian Deadlift',sets:'4x6',reps:'6 reps',rest:'60s',rpe:8,note:'Ista težina kao zadnji Trening A. Bez zagrijavanja s previše lakim — 1-2 zagrijne serije pa pravo na radnu težinu.'},
+      {name:'Nordic Curl',sets:'3x6',reps:'6 reps',rest:'45s',rpe:8,note:'Uvijek 6 reps, uvijek sporo. Ova vježba je prevencija lože za cijelu sezonu — ne preskačeš nikad.'},
+    ]}
+  ]},
+  bicikl:{label:'BICIKL',title:'Aerobna Baza',color:'#7c6af7',phase:'Sve faze',phases:[
+    {id:'main',name:'🚴 Strukturirani Ride',subtitle:'Vani na svježem zraku. 130-160 bpm zona koja gradi motor za 90 minuta footballa.',exercises:[
+      {name:'Zagrijavanje',sets:'10 minuta',reps:'100-110 bpm',rest:'—',rpe:3,note:'Lagano. Noge se ugriju. Ne skačeš odmah na jaki tempo.'},
+      {name:'Steady State',sets:'30-40 min',reps:'140-155 bpm',rest:'—',rpe:7,note:'Možeš govoriti samo kratke rečenice. Zlatna zona aerobne baze. Konstantan tempo bez intervala.'},
+      {name:'Intervalski Završetak',sets:'10 minuta',reps:'2 min jako / 1 min lagano',rest:'1 min',rpe:9,note:'3-4 intervala. Ostavljaš sve na kraju. Simulira intenzitetne promjene u utakmici.'},
+      {name:'Hlađenje + Stretching',sets:'10 minuta',reps:'ispod 110 bpm',rest:'—',rpe:3,note:'Hip flexor stretch i calf stretch odmah — bicikl skraćuje oboje. Uvijek.'},
+    ]}
+  ]}
+};
+
+// ══ ROUTINES ══
+const ROUTINES = {
+  jutro:{label:'Svaki dan — prije kave',title:'🌅 JUTARNJA RUTINA',color:'var(--accent3)',cls:'jutro',
+    intro:'Sa sedentarnim poslom tijelo se zatvara svaki dan. Ovih 10 minuta ujutro direktno smanjuje stres na koljenu i sprečava skraćivanje lože i hip flexora.',
+    steps:[
+      {name:'Hip 90/90 Stretch',param:'60s/strana',note:'Sjedni na pod, oba koljena u kut 90°. Otvara kuk koji se zatvorio spavanjem. Najvažnija jutarnja vježba.'},
+      {name:'Cat-Cow',param:'10 ponavljanja',note:'Na četiri uda — izmjenjuj savijanje i ispupčivanje leđa. Budi kralježnicu koja je bila komprimirana cijelu noć.'},
+      {name:'Glute Bridge',param:'2 × 15',note:'Aktivira gluteus prije dana sjedenja. Bez ovoga koljeno preuzima posao koji bi trebao raditi gluteus.'},
+      {name:'Thoracic Rotation',param:'8/strana',note:'Sjedni na pod, ruke iza glave, rotiraj gornji dio leđa. Smanjuje napetost u vratu i ramenima od tipkanja.'},
+    ]
+  },
+  pauza:{label:'Svaki sat na poslu',title:'💻 PAUZA NA POSLU',color:'var(--accent4)',cls:'pauza',
+    intro:'Postavi alarm svaki sat. 2 minute koje prekidaju kontinuirano skraćivanje hip flexora i vrata. Sjedenje 8 sati = direktan sabotaž oporavka koljena.',
+    steps:[
+      {name:'Hip Flexor Stretch uz stol',param:'30s/strana',note:'Stani, napravi korak naprijed, potisni kuk prema naprijed. Možeš raditi uz stol ili stolicu.'},
+      {name:'Wall Angels',param:'10 ponavljanja',note:'Leđa uz zid, ruke u kut 90°, klizi gore i dolje uz zid. Otvara prsa i aktivira gornji dio leđa.'},
+      {name:'Neck Rolls',param:'30 sekundi',note:'Lagano klizi glavu lijevo-desno i naprijed-nazad. NE puni kružni pokret — samo lateralna fleksija.'},
+    ]
+  },
+  vecer:{label:'Svaki dan — prije spavanja',title:'🌙 VEČERNJA RUTINA',color:'var(--accent2)',cls:'vecer',
+    intro:'5 minuta koje ubrzavaju oporavak dok spavaš. Stretching prije spavanja povećava amplitudu pokreta i smanjuje jutarnju ukočenost.',
+    steps:[
+      {name:'Pigeon Pose',param:'45s/strana',note:'Duboki gluteus i piriformis stretch. Direktno smanjuje kompresiju na koljenu. Ako je previše intenzivno, radi Figure 4 na leđima.'},
+      {name:'Hamstring Stretch',param:'45s/strana',note:'Lezi na leđa, jednu nogu podij gore i drži. Pasivni stretch lože dok si relaksiran je najefikasniji.'},
+      {name:'Box Breathing',param:'2 minute',note:'4s udah — 4s drži — 4s izdah — 4s drži. Aktivira parasimpatički sustav i ubrzava oporavak. Razlika je mjerljiva.'},
+    ]
+  }
+};
+
+// ══ STATE ══
+let currentPhase = 1;
+let currentWeek = 1;
+let currentWorkout = null;
+let completedEx = new Set();
+let warmupDone = new Set();
+let currentRoutine = null;
+let routineDone = new Set();
+let timerOpen = false, timerRunning = false, timerVal = 45, timerSel = 45, timerInterval = null, timerTotal = 45;
+let metrics = JSON.parse(localStorage.getItem('trening_metrics') || '{}');
+
+// ══ PHASE FUNCTIONS ══
+function setPhase(p, btn) {
+  currentPhase = p;
+  document.querySelectorAll('.ptab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const ph = PHASES[p];
+  document.documentElement.style.setProperty('--phase-color', ph.color);
+  document.getElementById('hero-tag').textContent = 'Stopar · Pivot · Put do Sezone';
+  document.getElementById('hero-em').textContent = ph.name;
+  document.getElementById('hero-em').style.color = ph.color;
+  document.getElementById('main-hero').style.background = ph.gradient;
+  const ic = document.getElementById('phase-info-card');
+  ic.className = `phase-info ${ph.cls}`;
+  ic.style.margin = '16px 20px 0';
+  document.getElementById('pi-title').textContent = ph.title;
+  document.getElementById('pi-title').style.color = ph.color;
+  document.getElementById('pi-text').textContent = ph.text;
+  document.getElementById('pi-chips').innerHTML = ph.chips.map(c => `<span class="pi-chip">${c}</span>`).join('');
+  if(p===1) currentWeek = Math.max(1, Math.min(currentWeek, 5));
+  else if(p===2) currentWeek = Math.max(6, Math.min(currentWeek, 12));
+  else if(p===3) currentWeek = Math.max(13, Math.min(currentWeek, 17));
+  else currentWeek = 18;
+  updateWeekLabel();
+  updateTimeline();
+  renderSchedule();
+  renderTrainingCards();
+  updateTimerColor();
+}
+
+function changeWeek(dir) {
+  const ph = PHASES[currentPhase];
+  const ranges = {1:[1,5],2:[6,12],3:[13,17],4:[18,18]};
+  const [min, max] = ranges[currentPhase];
+  currentWeek = Math.max(min, Math.min(max, currentWeek + dir));
+  updateWeekLabel();
+  updateTimeline();
+  renderTrainingCards();
+}
+
+function updateWeekLabel() {
+  document.getElementById('week-label').textContent = `Tjedan ${currentWeek} / 18`;
+}
+
+function updateTimeline() {
+  const pct = ((currentWeek - 1) / 17) * 100;
+  const fill = document.getElementById('tl-fill');
+  fill.style.width = pct + '%';
+  fill.style.background = PHASES[currentPhase].color;
+  const dots = ['wd1','wd5','wd12','wd17','wd18'];
+  const weeks = [1,5,12,17,18];
+  dots.forEach((id, i) => {
+    document.getElementById(id).className = currentWeek >= weeks[i] ? 'wdot active' : 'wdot';
+  });
+}
+
+function updateTimerColor() {
+  const color = PHASES[currentPhase].color;
+  document.querySelector('.timer-btn-fab').style.background = color;
+  document.querySelector('circle.fill2').style.stroke = color;
+  document.querySelector('.t-start').style.background = color;
+  document.querySelector('.done-btn').style.background = color;
+  document.getElementById('done-title').style.color = color;
+  document.querySelectorAll('.prog-btn').forEach(b => b.style.background = color);
+  document.querySelectorAll('.prog-val').forEach(v => v.style.color = color);
+}
+
+// ══ SCHEDULE ══
+function renderSchedule() {
+  const sched = PHASES[currentPhase].schedule;
+  const el = document.getElementById('sched-card');
+  el.innerHTML = sched.map(r => `
+    <div class="sched-row">
+      <div class="sched-day">${r.day}</div>
+      <div class="sched-act">${r.act}</div>
+      <span class="sched-badge ${r.bs}">${r.badge}</span>
+    </div>`).join('');
+}
+
+// ══ TRAINING CARDS ══
+function renderTrainingCards() {
+  const p = currentPhase;
+  const suffix = p===1?'f1':p===2?'f2':p===3?'f3':'f1';
+  const ptag = p===1?'pt-f1':p===2?'pt-f2':'pt-f3';
+  const cards = [
+    {cls:'ta', key:`a_${suffix}`, day:'Utorak — 6:30 ujutro', extra:''},
+    {cls:'tb', key:`b_${suffix}`, day:'Srijeda — 6:30 ujutro', extra:''},
+    {cls:'tc', key:`c_${suffix}`, day:'Četvrtak — navečer', extra:''},
+    {cls:'trdl', key:'rdl', day:'Petak — 20 minuta', extra:''},
+    {cls:'td', key:'bicikl', day:'Pon / Pet / Sub', extra:'🚴'},
+  ];
+  if(p===4){
+    document.getElementById('training-cards').innerHTML = `
+      <div class="tcard ta" onclick="openWorkout('a_f1')">
+        <span class="phase-tag pt-f1">DELOAD — 50% VOLUMENA</span>
+        <div class="tc-top"><div class="tc-label" style="color:var(--accent);">TRENING A</div><div class="tc-day">Utorak — lagano</div></div>
+        <div class="tc-title">Iste vježbe, 50% težine</div>
+        <div class="tc-desc">Čučanj, RDL, Nordic curl — sve isto ali pola težine i pola serija. Tijelo se superkompenzira.</div>
+        <div class="tc-meta"><div class="tc-meta-item"><div class="tc-dot" style="background:var(--accent);"></div> 30 min</div></div>
+      </div>
+      <div class="tcard td" onclick="openWorkout('bicikl')">
+        <span class="phase-tag" style="background:rgba(124,106,247,0.15);color:var(--accent4);">DELOAD</span>
+        <div class="tc-top"><div class="tc-label" style="color:var(--accent4);">BICIKL</div><div class="tc-day">Ponedjeljak — 30 min</div></div>
+        <div class="tc-title">Lagano — bez intervala</div>
+        <div class="tc-desc">Steady state 30 minuta, 120-130 bpm. Samo kretanje, bez napora.</div>
+        <div class="tc-meta"><div class="tc-meta-item"><div class="tc-dot" style="background:var(--accent4);"></div> 30 min</div></div>
+      </div>`;
+    return;
+  }
+  const wk = PHASES[p];
+  document.getElementById('training-cards').innerHTML = cards.map(c => {
+    const w = WORKOUTS[c.key];
+    if(!w) return '';
+    return `<div class="tcard ${c.cls}" onclick="openWorkout('${c.key}')">
+      <span class="phase-tag ${ptag}">Faza ${p} · Tjedan ${currentWeek}</span>
+      <div class="tc-top"><div class="tc-label">${w.label}</div><div class="tc-day">${c.day}</div></div>
+      <div class="tc-title">${w.title}</div>
+      <div class="tc-desc">${w.phases[0].subtitle}</div>
+      <div class="tc-meta">
+        <div class="tc-meta-item"><div class="tc-dot"></div> ${w.phases.reduce((a,ph)=>a+ph.exercises.length,0)} blokova</div>
+        <div class="tc-meta-item"><div class="tc-dot"></div> ${c.key==='bicikl'?'60-75 min':c.key==='rdl'?'20 min':'50-70 min'}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══ WORKOUT ══
+function openWorkout(key) {
+  currentWorkout = key;
+  completedEx = new Set();
+  const w = WORKOUTS[key];
+  document.getElementById('wh-label').textContent = w.label + (w.phase ? ` · ${w.phase}` : '');
+  document.getElementById('wh-title').textContent = w.title;
+  document.getElementById('prog-bar').style.background = w.color;
+  const nav = document.getElementById('phase-nav');
+  nav.innerHTML = '';
+  w.phases.forEach((p, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'pnav-btn' + (i===0?' active':'');
+    btn.textContent = p.name;
+    btn.style.cssText = i===0 ? `background:${w.color};border-color:${w.color};color:#000;` : '';
+    btn.onclick = () => {
+      document.getElementById('phase-'+p.id).scrollIntoView({behavior:'smooth',block:'start'});
+      document.querySelectorAll('.pnav-btn').forEach(b => { b.classList.remove('active'); b.style.cssText=''; });
+      btn.classList.add('active');
+      btn.style.cssText = `background:${w.color};border-color:${w.color};color:#000;`;
+    };
+    nav.appendChild(btn);
+  });
+  renderExercises(w);
+  updateProgress();
+  showScreen2('workout');
+}
+
+function renderExercises(w) {
+  const list = document.getElementById('ex-list');
+  list.innerHTML = '';
+  let gi = 0;
+  w.phases.forEach(ph => {
+    const pd = document.createElement('div');
+    pd.id = 'phase-' + ph.id;
+    pd.style.paddingTop = '8px';
+    pd.innerHTML = `<div class="ph-title">${ph.name}</div><div class="ph-sub">${ph.subtitle}</div>`;
+    if(ph.circuit) {
+      pd.innerHTML += `<div class="circuit-info">${ph.rounds} runde × ${ph.exercises.length} vježbe — ${ph.rest}</div>`;
+    }
+    ph.exercises.forEach(ex => {
+      if(ex.superset) {
+        const g = document.createElement('div'); g.className = 'ss-group';
+        g.innerHTML = '<div class="ss-label">Superset</div>';
+        ex.exercises.forEach(se => g.appendChild(mkCard(se, gi++)));
+        pd.appendChild(g);
+      } else pd.appendChild(mkCard(ex, gi++));
+    });
+    list.appendChild(pd);
+  });
+}
+
+function rpeG(r){return r<=7?'g7':r===8?'g8':r===9?'g9':'g10';}
+function rpeC(r){return r<=7?'rv7':r===8?'rv8':r===9?'rv9':'rv10';}
+function rpeL(r){return{3:'Lagano',6:'Lagano',7:'Još 3+',8:'Još 2',9:'Još 1',10:'Maks'}[r]||'';}
+function mkDots(rpe){let d='';for(let i=1;i<=10;i++)d+=`<div class="rpe-dot${i<=rpe?' '+rpeG(rpe):''}"></div>`;return d;}
+
+function mkCard(ex, idx) {
+  const c = document.createElement('div');
+  c.className = 'ex-card'; c.id = 'ex-' + idx;
+  c.onclick = () => toggleEx(idx);
+  c.innerHTML = `
+    <div class="ex-top">
+      <div class="ex-chk"><span class="chk-icon">✓</span></div>
+      <div class="ex-info">
+        <div class="ex-name">${ex.name}</div>
+        <div class="ex-params">
+          <span class="param-chip hi">${ex.sets}</span>
+          <span class="param-chip">${ex.reps}</span>
+          ${ex.rest!=='—'?`<span class="param-chip">⏱ ${ex.rest}</span>`:''}
+        </div>
+      </div>
+    </div>
+    ${ex.rpe?`<div class="rpe-row"><span class="rpe-lbl">RPE</span><div class="rpe-dots">${mkDots(ex.rpe)}</div><span class="rpe-val ${rpeC(ex.rpe)}">${ex.rpe}/10</span><span style="font-size:11px;color:var(--muted);">${rpeL(ex.rpe)}</span></div>`:''}
+    ${ex.note?`<div class="ex-note">💡 ${ex.note}</div>`:''}`;
+  return c;
+}
+
+function toggleEx(idx) {
+  const c = document.getElementById('ex-' + idx);
+  if(completedEx.has(idx)) { completedEx.delete(idx); c.classList.remove('done'); }
+  else { completedEx.add(idx); c.classList.add('done'); }
+  updateProgress();
+  if(completedEx.size === getTotalEx()) setTimeout(() => document.getElementById('done-overlay').classList.add('show'), 400);
+}
+
+function getTotalEx() {
+  if(!currentWorkout) return 0;
+  let n = 0;
+  WORKOUTS[currentWorkout].phases.forEach(p => p.exercises.forEach(e => n += e.superset ? e.exercises.length : 1));
+  return n;
+}
+
+function updateProgress() {
+  const t = getTotalEx(), d = completedEx.size;
+  document.getElementById('prog-bar').style.width = (t ? d/t*100 : 0) + '%';
+  document.getElementById('prog-text').textContent = d + '/' + t;
+}
+
+function finishWorkout() {
+  document.getElementById('done-overlay').classList.remove('show');
+  goHome();
+}
+
+// ══ WARMUP ══
+function openWarmup() {
+  warmupDone = new Set();
+  for(let i=0;i<9;i++) { const el=document.getElementById('ws-'+i); if(el){el.classList.remove('done');el.querySelector('.ws-num').textContent=i+1;} }
+  showScreen2('warmup');
+}
+
+function toggleWS(idx) {
+  const el = document.getElementById('ws-' + idx);
+  if(warmupDone.has(idx)) { warmupDone.delete(idx); el.classList.remove('done'); el.querySelector('.ws-num').textContent = idx+1; }
+  else { warmupDone.add(idx); el.classList.add('done'); el.querySelector('.ws-num').textContent = '✓'; }
+  document.getElementById('wu-prog').textContent = warmupDone.size + '/9';
+}
+
+// ══ ROUTINE ══
+function openRoutine(type) {
+  currentRoutine = type; routineDone = new Set();
+  const r = ROUTINES[type];
+  document.getElementById('rout-label').textContent = r.label;
+  document.getElementById('rout-title').textContent = r.title;
+  document.getElementById('rout-title').style.color = r.color;
+  const el = document.getElementById('rout-steps');
+  el.innerHTML = `<div class="rout-intro ${r.cls}"><div class="rout-intro-text">${r.intro}</div></div>`;
+  r.steps.forEach((step, i) => {
+    const d = document.createElement('div');
+    d.className = 'wu-step'; d.id = 'rs-' + i; d.onclick = () => toggleRS(i);
+    d.innerHTML = `<div class="ws-num">${i+1}</div><div class="ws-body"><div class="ws-name">${step.name}</div><div class="ws-params"><span class="ws-param green">${step.param}</span></div><div class="ws-note">${step.note}</div></div>`;
+    el.appendChild(d);
+  });
+  const btn = document.createElement('button');
+  btn.className = 'wu-done-btn';
+  btn.style.background = r.color.includes('accent3') ? '#ffd60a' : r.color.includes('accent4') ? '#7c6af7' : '#ff4d6d';
+  btn.textContent = '✓ Gotovo — natrag';
+  btn.onclick = goHome;
+  el.appendChild(btn);
+  updateRoutineProgress();
+  showScreen2('routine');
+}
+
+function toggleRS(idx) {
+  const el = document.getElementById('rs-' + idx);
+  if(routineDone.has(idx)) { routineDone.delete(idx); el.classList.remove('done'); el.querySelector('.ws-num').textContent = idx+1; }
+  else { routineDone.add(idx); el.classList.add('done'); el.querySelector('.ws-num').textContent = '✓'; }
+  updateRoutineProgress();
+}
+function updateRoutineProgress() {
+  const total = ROUTINES[currentRoutine].steps.length;
+  document.getElementById('rout-prog').textContent = routineDone.size + '/' + total;
+}
+
+// ══ NAVIGATION ══
+function showTab(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(name).classList.add('active');
+  document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('bnav-' + name).classList.add('active');
+  window.scrollTo(0,0);
+  if(name === 'progress') renderProgress();
+}
+
+function showScreen2(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(name).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function goHome() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('home').classList.add('active');
+  if(timerOpen) toggleTimer();
+  resetTimer();
+}
+
+// ══ PROGRESS TRACKING ══
+const METRIC_LABELS = {kg:'⚖️ kg',cmj:'⬆️ CMJ (cm)',bj:'➡️ Broad Jump (cm)',sq:'🏋️ Čučanj (kg)'};
+let sheetsUrl = localStorage.getItem('trening_sheets_url') || '';
+
+function saveMetric(type) {
+  const val = parseFloat(document.getElementById('inp-' + type).value);
+  if(isNaN(val)) return;
+  if(!metrics[type]) metrics[type] = [];
+  metrics[type].push({week: currentWeek, val, date: new Date().toLocaleDateString('hr-HR')});
+  localStorage.setItem('trening_metrics', JSON.stringify(metrics));
+  document.getElementById('inp-' + type).value = '';
+
+  // Pošalji u Sheets ako postoji URL
+  if(sheetsUrl) {
+    fetch(sheetsUrl, {
+      method:'POST',
+      mode:'no-cors',
+      body: JSON.stringify({type, week: currentWeek, val})
+    }).catch(() => {});
+  }
+
+  renderProgress();
+}
+
+function saveSheetsUrl() {
+  const url = document.getElementById('sheets-url-input').value.trim();
+  if(!url) return;
+  sheetsUrl = url;
+  localStorage.setItem('trening_sheets_url', url);
+  document.getElementById('sheets-setup').style.display = 'none';
+  document.getElementById('sheets-connected').style.display = 'flex';
+}
+
+function resetSheetsUrl() {
+  sheetsUrl = '';
+  localStorage.removeItem('trening_sheets_url');
+  document.getElementById('sheets-setup').style.display = 'block';
+  document.getElementById('sheets-connected').style.display = 'none';
+}
+
+function renderProgress() {
+  ['kg','cmj','bj','sq'].forEach(type => {
+    const hist = metrics[type] || [];
+    const el = document.getElementById('hist-' + type);
+    if(!el) return;
+    if(hist.length === 0) { el.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:8px;">Nema još podataka</div>'; return; }
+    el.innerHTML = [...hist].reverse().slice(0,6).map((entry, i, arr) => {
+      const prev = arr[i+1];
+      let diff = '';
+      if(prev) {
+        const d = entry.val - prev.val;
+        const isGood = type === 'kg' ? d < 0 : d > 0;
+        diff = `<span class="prog-diff ${isGood?'diff-good':'diff-bad'}">${d>0?'+':''}${d.toFixed(1)}</span>`;
+      }
+      return `<div class="prog-row">
+        <div class="prog-week">T${entry.week} · ${entry.date}</div>
+        <div style="display:flex;align-items:center;gap:8px;">${diff}<div class="prog-val">${entry.val}</div></div>
+      </div>`;
+    }).join('');
+  });
+  updateTimerColor();
+}
+
+// ══ TIMER ══
+function toggleTimer(){timerOpen=!timerOpen;document.getElementById('timer-panel').classList.toggle('open',timerOpen);}
+function setPreset(val,btn){timerSel=val;timerVal=val;timerTotal=val;document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');if(timerRunning){clearInterval(timerInterval);timerRunning=false;document.getElementById('timer-start-btn').textContent='Start';}updTD();updC();}
+function toggleTimerRun(){
+  if(timerRunning){clearInterval(timerInterval);timerRunning=false;document.getElementById('timer-start-btn').textContent='Start';}
+  else{
+    if(timerVal<=0){timerVal=timerSel;timerTotal=timerSel;}
+    timerRunning=true;document.getElementById('timer-start-btn').textContent='Pauza';
+    timerInterval=setInterval(()=>{
+      timerVal--;updTD();updC();
+      if(timerVal<=0){clearInterval(timerInterval);timerRunning=false;document.getElementById('timer-start-btn').textContent='Start';document.getElementById('timer-label').textContent='✅ Gotovo!';try{const ctx=new AudioContext();[440,550,660].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=f;g.gain.setValueAtTime(0.3,ctx.currentTime+i*0.15);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+i*0.15+0.3);o.start(ctx.currentTime+i*0.15);o.stop(ctx.currentTime+i*0.15+0.3);});}catch(e){}}
+      else document.getElementById('timer-label').textContent='Odmor...';
+    },1000);
+  }
+}
+function resetTimer(){clearInterval(timerInterval);timerRunning=false;timerVal=timerSel;timerTotal=timerSel;document.getElementById('timer-start-btn').textContent='Start';document.getElementById('timer-label').textContent='Odaberi pauzu';updTD();updC();}
+function updTD(){const e=document.getElementById('timer-display');if(e)e.textContent=timerVal;}
+function updC(){const c=document.getElementById('timer-circle');if(c)c.style.strokeDashoffset=326.7*(1-(timerTotal>0?timerVal/timerTotal:1));}
+
+// ══ INIT ══
+setPhase(1, document.querySelector('.ptab.f1'));
+renderProgress();
+// Init Sheets UI
+if(sheetsUrl) {
+  document.getElementById('sheets-setup').style.display = 'none';
+  document.getElementById('sheets-connected').style.display = 'flex';
+}
+</script>
+</body>
+</html>
